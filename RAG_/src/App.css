@@ -1,12 +1,12 @@
 .app-container {
   min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #004d00 0%, #064c00 100%);
   padding: 2rem;
 }
 
 .app-header {
   text-align: center;
-  color: white;
+  color: rgb(17, 199, 23);
   margin-bottom: 2rem;
 }
 
@@ -75,17 +75,17 @@
   gap: 0.5rem;
   padding: 1rem;
   background: #f8f9fa;
-  border: 2px dashed #667eea;
+  border: 2px dashed rgb(17, 199, 23);
   border-radius: 8px;
   cursor: pointer;
   transition: all 0.3s ease;
-  color: #667eea;
+  color: rgb(17, 199, 23);
   font-weight: 500;
 }
 
 .file-label:hover {
   background: #e8ebff;
-  border-color: #764ba2;
+  border-color: rgb(17, 199, 23);
 }
 
 .btn {
@@ -108,23 +108,23 @@
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, rgb(17, 199, 23) 0%, rgb(17, 199, 23) 100%);
   color: white;
 }
 
 .btn-primary:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+  box-shadow: 0 4px 12px rgba(17, 199, 23, 0.4);
 }
 
 .btn-danger {
-  background: #dc3545;
+  background: rgb(17, 199, 23);
   color: white;
   margin-top: 1rem;
 }
 
 .btn-danger:hover:not(:disabled) {
-  background: #c82333;
+  background: rgb(17, 199, 23);
   transform: translateY(-2px);
 }
 
@@ -162,7 +162,7 @@
   margin-top: 0;
   margin-bottom: 0.75rem;
   font-size: 1rem;
-  color: #666;
+  color: rgb(17, 199, 23);
 }
 
 .uploaded-files ul {
@@ -215,7 +215,7 @@
 }
 
 .message-question {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, rgb(17, 199, 23) 0%, rgb(17, 199, 23)  100%);
   color: white;
   margin-left: auto;
   text-align: right;
@@ -265,7 +265,7 @@
 
 .question-input:focus {
   outline: none;
-  border-color: #667eea;
+  border-color: rgb(17, 199, 23);
 }
 
 .question-input:disabled {

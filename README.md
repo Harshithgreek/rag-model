@@ -1,38 +1,34 @@
 # RAG Document Q&A System
 
-A Retrieval-Augmented Generation (RAG) application that allows you to upload PDF documents and ask questions about their content. The system uses OpenAI's GPT models to provide accurate, context-aware answers based on your documents.
+A Retrieval-Augmented Generation (RAG) application that allows you to upload PDF documents and ask questions about their content. Uses free local embeddings and optionally OpenAI GPT for AI-generated answers.
 
 ## Features
 
-- 📄 **Upload PDF Documents** - Support for PDF file uploads
-- 💬 **Ask Questions** - Natural language queries about your documents
-- 🎯 **Relevant Answers** - AI-powered responses with source citations
-- 🔄 **Multiple Documents** - Upload and query across multiple documents
-- 🧹 **Reset Database** - Clear all documents and start fresh
-- 🎨 **Simple Interface** - Clean, intuitive user interface
+- 📄 **Upload PDF Documents** — Process and index PDF files
+- 💬 **Ask Questions** — Natural language queries about your documents
+- 🎯 **Relevant Answers** — Context-aware responses with source citations
+- 🔄 **Multiple Documents** — Upload and query across multiple documents
+- 🧹 **Reset Database** — Clear all documents and start fresh
+- 🎨 **Simple Interface** — Clean, intuitive chat-based UI
+- 🆓 **Free Local Embeddings** — Uses HuggingFace `all-MiniLM-L6-v2` (no API key needed)
+- 🔁 **LLM Fallback** — Works without OpenAI; returns relevant excerpts via similarity search
 
 ## Tech Stack
 
-### Backend
-
-- **FastAPI** - Modern Python web framework
-- **LangChain** - LLM orchestration framework
-- **OpenAI** - GPT-3.5-turbo for question answering
-- **ChromaDB** - Vector database for document embeddings
-- **PyPDF** - PDF document processing
-
-### Frontend
-
-- **React** - UI framework
-- **TypeScript** - Type-safe JavaScript
-- **Vite** - Fast build tool
-- **Lucide React** - Icon library
+| Layer      | Technology                                      |
+| ---------- | ----------------------------------------------- |
+| Frontend   | React 19, TypeScript, Vite                      |
+| Backend    | FastAPI, Uvicorn                                |
+| Embeddings | HuggingFace Sentence Transformers (local, free) |
+| Vector DB  | ChromaDB                                        |
+| LLM        | OpenAI GPT-3.5-turbo (optional)                 |
+| Framework  | LangChain                                       |
 
 ## Prerequisites
 
-- Python 3.8 or higher
-- Node.js 16 or higher
-- OpenAI API key
+- Python 3.10+
+- Node.js 20.19+ or 22.12+
+- (Optional) OpenAI API key for AI-generated answers
 
 ## Installation
 
@@ -51,9 +47,9 @@ cd backend
 pip install -r requirements.txt
 ```
 
-#### Configure environment variables
+#### (Optional) Configure OpenAI for AI-generated answers
 
-The `.env` file is already configured with your OpenAI API key. If you need to update it:
+The app works without an API key (uses similarity search). For LLM-powered answers, create a `.env` file:
 
 ```bash
 # backend/.env
@@ -77,12 +73,12 @@ Open a terminal and run:
 
 ```bash
 cd backend
-python main.py
+uvicorn main:app --reload --port 8000
 ```
 
-The backend API will start at `http://localhost:8000`
+The backend API will start at `http://localhost:8000`. Verify with `http://localhost:8000/health`.
 
-You can verify it's running by visiting `http://localhost:8000/health`
+> **Note:** The first run downloads the embedding model (~90 MB) — this is a one-time download.
 
 ### 2. Start the Frontend Development Server
 
@@ -93,7 +89,7 @@ cd RAG_
 npm run dev
 ```
 
-The frontend will start at `http://localhost:5173` (or another port if 5173 is busy)
+The frontend will start at `http://localhost:5173` (or another port if 5173 is busy).
 
 ### 3. Access the Application
 
@@ -154,13 +150,13 @@ Rag model/
 
 ## How It Works
 
-1. **Document Upload**: PDFs are uploaded and split into chunks using LangChain's text splitter
-2. **Embedding**: Each chunk is converted into vector embeddings using OpenAI's embedding model
-3. **Storage**: Embeddings are stored in ChromaDB for efficient retrieval
-4. **Query**: When you ask a question, it's converted to an embedding
+1. **Document Upload**: PDFs are uploaded and split into chunks using LangChain's `RecursiveCharacterTextSplitter`
+2. **Embedding**: Each chunk is converted into vector embeddings using the local HuggingFace `all-MiniLM-L6-v2` model (free, runs on CPU)
+3. **Storage**: Embeddings are stored in ChromaDB for efficient similarity search
+4. **Query**: When you ask a question, it's converted to an embedding using the same model
 5. **Retrieval**: The most relevant document chunks are retrieved from ChromaDB
-6. **Generation**: OpenAI's GPT-3.5-turbo generates an answer based on the retrieved context
-7. **Response**: The answer is returned with source citations
+6. **Generation**: If an OpenAI API key is available, GPT-3.5-turbo generates a natural language answer from the retrieved context. Otherwise, the relevant excerpts are returned directly.
+7. **Response**: The answer is returned with source document and page citations
 
 ## Troubleshooting
 
@@ -168,8 +164,13 @@ Rag model/
 
 **"OPENAI_API_KEY not found"**
 
-- Make sure the `.env` file exists in the `backend` folder
-- Verify the API key is correctly set
+- This is just a warning — the app works without it using similarity search
+- To enable LLM answers, add a `.env` file with your key in the `backend` folder
+
+**OpenAI 429 quota error**
+
+- The app automatically falls back to similarity search when OpenAI quota is exhausted
+- Answers will be direct document excerpts instead of LLM-generated
 
 **"Module not found"**
 
@@ -191,7 +192,8 @@ Rag model/
 **Slow responses**
 
 - Large PDFs take time to process
-- First query after upload may be slower as the model initializes
+- First startup downloads the embedding model (~90 MB)
+- If OpenAI key is present but quota exhausted, there may be a brief delay before fallback kicks in
 
 **Poor answer quality**
 

@@ -129,7 +129,7 @@ function App() {
   return (
     <div className="app-container">
       <header className="app-header">
-        <h1>📚 RAG Document Q&A</h1>
+        <h1>📚 DOCUMIND RAG</h1>
         <p>Upload documents and ask questions about their content</p>
       </header>
 
